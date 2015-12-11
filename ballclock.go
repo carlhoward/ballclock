@@ -21,31 +21,31 @@ func (t *track) count() int {
 }
 
 func (t *track) val() string {
-    return fmt.Sprintf("%s %v\n", t.name, t.balls);
+    return fmt.Sprintf("%s %v\n", t.name, t.balls)
 }
 
 func (t *track) cacheState() {
     t.cachedState = make([]int, len(t.balls), len(t.balls))
-    copy(t.cachedState, t.balls);
+    copy(t.cachedState, t.balls)
 }
 
 func (t *track) sameState() bool {
     if len(t.balls) != len(t.cachedState) {
-        return false;
+        return false
     }
     for i := 0; i < len(t.balls); i++ {
         if t.balls[i] != t.cachedState[i] {
-            return false;
+            return false
         }
     }
-    return true;
+    return true
 }
 
 func (t *track) remFirstBall() int {
     l := len(t.balls)
     if (l == 0) {
-        fmt.Println("Error: empty overflow track");
-        os.Exit(1);
+        fmt.Println("Error: empty overflow track")
+        os.Exit(1)
     }
     b := t.balls[0]
     t.balls = t.balls[1:]
@@ -64,15 +64,15 @@ func (t *track) clear() {
 }
 
 func (t *track) addBall(b int) {
-//    fmt.Printf("Adding %d to %v\n", b, t);
+//    fmt.Printf("Adding %d to %v\n", b, t)
     if (t.limit != 0 && len(t.balls) == t.limit) {
         // cascade
         for (t.count() > 0) {
             t.mainTrack.addBall(t.remLastBall())
         }
-        t.nextTrack.addBall(b);
+        t.nextTrack.addBall(b)
     } else {
-        t.balls = append(t.balls, b);
+        t.balls = append(t.balls, b)
     }
 }
 
@@ -99,10 +99,10 @@ func cacheState() {
 func sameState() bool {
     for _, track := range tracks {
         if !track.sameState() {
-            return false;
+            return false
         }
     }
-    return true;
+    return true
 }
 
 func getState() map[string][]int {
@@ -110,11 +110,11 @@ func getState() map[string][]int {
     for _, track := range tracks {
         m[track.name] = track.balls
     }
-    return m;
+    return m
 }
 
 func initTracks(n int) {
-    clear();
+    clear()
     // add balls to the overflow track
     // this gives starting time of 1:00
     for b := 1; b <= n; b++ {
@@ -123,7 +123,7 @@ func initTracks(n int) {
 }
 
 func clear() {
-    elapsedMinutes = 0;
+    elapsedMinutes = 0
     for _, track := range tracks {
         track.clear()
     }
@@ -157,7 +157,7 @@ func main() {
     if len(os.Args) == 2 {
         // MODE_1: run until state repeats, then display days elapsed
         numberBalls = getIntegerArg(1)
-        targetMinutes = 0;
+        targetMinutes = 0
     } else if len(os.Args) == 3 {
         // MODE_2: run for given time in minutes, then display state
         numberBalls = getIntegerArg(1)
@@ -175,7 +175,7 @@ func main() {
     fiveminTrack = track{name: "FiveMin", limit: 11}
     hourTrack = track{name: "Hour", limit: 11}
     mainTrack = track{name: "Main", limit: 0}
-    tracks = []*track{&minTrack, &fiveminTrack, &hourTrack, &mainTrack};
+    tracks = []*track{&minTrack, &fiveminTrack, &hourTrack, &mainTrack}
 
     // link tracks
     minTrack.nextTrack = &fiveminTrack
@@ -188,7 +188,7 @@ func main() {
     }
 
     initTracks(numberBalls)
-    cacheState();
+    cacheState()
 
     // main loop
     for {
@@ -198,12 +198,12 @@ func main() {
             if elapsedMinutes == targetMinutes {
                 strJ, _ := json.Marshal(getState())
                 fmt.Printf("State for %d balls after %d minutes:\n%s\n", numberBalls, elapsedMinutes, strJ)
-                break;
+                break
             }
         } else if(sameState()) {
-            days := elapsedMinutes / 60 / 24;
+            days := elapsedMinutes / 60 / 24
             fmt.Printf("%d balls cycle after %d days.\n", numberBalls, days)
-            break;
+            break
         }
     }
 
