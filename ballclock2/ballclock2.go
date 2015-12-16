@@ -20,7 +20,7 @@ import (
     "os"
     "strconv"
     "encoding/json"
-	"github.com/carlhoward/track"
+	"github.com/carlhoward/ballclock/track"
 )
 
 // global tracks
