@@ -96,7 +96,7 @@ func (r *ring) check() bool {
 //  track definitions (lifo queue)
 
 type track struct {
-    balls [12]int
+    balls [11]int
     count int
     limit int
     next buffer
